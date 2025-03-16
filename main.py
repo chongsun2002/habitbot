@@ -26,7 +26,8 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/webhook")
 async def webhook(request: Request):
-    client_ip = request.client.host
+    x_forwarded_for = request.headers.get("X-Forwarded-For")
+    client_ip = x_forwarded_for.split(",")[0].strip() if x_forwarded_for else request.client.host
 
     if not is_telegram_ip(client_ip):
         raise HTTPException(status_code=403, detail="Forbidden: Only ip addresses in telegram's subnet are allowed to access this route.")
