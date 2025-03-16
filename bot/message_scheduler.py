@@ -74,10 +74,10 @@ class MessageScheduler:
             trigger=CronTrigger(hour=0, minute=0, timezone=timezone.utc)
         )
 
-        # Reflection Reminder Messages - Every day at 9 PM UTC+5 (i.e. 16:00 UTC)
+        # Reflection Messages - Every day at 9 PM UTC+5 (i.e. 16:00 UTC)
         self.scheduler.add_job(
             self.scheduled_reflection_sending,
-            trigger=CronTrigger(hour=13, minute=2, timezone=timezone.utc)
+            trigger=CronTrigger(hour=0, minute=0, timezone=timezone.utc)
         )
 
     def start_scheduler(self):
