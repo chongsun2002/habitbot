@@ -4,7 +4,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 import asyncio
 import logging
 from .db.db import Database
-from datetime import timezone, timezone, datetime
+from datetime import timezone, timezone, datetime, timedelta
 
 class MessageScheduler:
     _instance = None  # Class variable to store the singleton instance
@@ -66,7 +66,7 @@ class MessageScheduler:
         # Reminder Messages - Every day at 5 PM UTC+5
         self.scheduler.add_job(
             self.scheduled_reminder_messages,
-            trigger=CronTrigger(hour=0, minute=0, timezone=timezone.utc)
+            trigger=CronTrigger(hour=12, minute=0, timezone=timezone.utc)
         )
 
         # Broken Streak Messages - Every day at 5 AM UTC+5 (i.e. 00:00 UTC)
@@ -82,10 +82,12 @@ class MessageScheduler:
 
         # Reflection Messages - Every day at 9 PM UTC+5 (i.e. 16:00 UTC)
         reflection_starttime = datetime.strptime("2024-03-23 00:00:00", "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        reflection_stoptime = reflection_starttime + timedelta(days=22)
         self.scheduler.add_job(
             self.scheduled_reflection_sending,
             trigger=IntervalTrigger(days=3,
-                                    start_date=reflection_starttime)
+                                    start_date=reflection_starttime,
+                                    end_date=reflection_stoptime)
         )
 
     def start_scheduler(self):
