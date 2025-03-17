@@ -39,6 +39,8 @@ class MessageScheduler:
             "You've got this 👍🏻❤️"
         )
         bot = await TelegramBot.get_instance()
+        users_with_broken_streaks = Database.get_instance().get_users_streaks_broken()
+        logging.info(users_with_broken_streaks)
         await bot.broadcast_message(broken_streak_message, Database.get_instance().get_users_streaks_broken())
 
     async def scheduled_reflection_sending(self):

@@ -373,7 +373,7 @@ class Database:
         current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)
         # Calculate the cutoff date (today - 2 days)
         cutoff_date = (current_datetime - timedelta(days=2)).date().isoformat()  # e.g., "2025-03-15"
-        
+        logging.info(cutoff_date)
         # Use TRIM and date() to ensure proper date conversion and remove any stray spaces.
         self.cursor.execute(
             """
