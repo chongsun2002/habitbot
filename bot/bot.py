@@ -86,7 +86,7 @@ class TelegramBot:
         """
         Sends a message to all users in the database while preventing Telegram rate limits.
         """
-        if not user_ids:
+        if user_ids is None:
             logging.warning("Getting all users as user_ids are empty")
             user_ids = Database.get_instance().get_all_users()  # Fetch users from DB
 
