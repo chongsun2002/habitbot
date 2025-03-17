@@ -15,6 +15,7 @@ from .start_handler import start_handler
 from .admin_broadcast_handler import admin_broadcast_handler
 from .edit_habit_handler import edit_habit_handler
 from .get_streak_handler import get_streak_handler
+from .error_handler import global_error_handler
 
 from .db.db import Database
 from .message_scheduler import MessageScheduler
@@ -58,6 +59,7 @@ class TelegramBot:
         self.app.add_handler(edit_habit_handler)
         self.app.add_handler(admin_broadcast_handler)
         self.app.add_handler(get_streak_handler)
+        self.app.add_error_handler(global_error_handler)
 
     async def set_webhook(self):
         webhook_url = f"{Config.WEBHOOK_URL}/webhook"
