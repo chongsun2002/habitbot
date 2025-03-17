@@ -377,7 +377,7 @@ class Database:
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR lastDoneDate < NOT IN(?, ?, ?)
+            WHERE lastDoneDate IS NULL OR lastDoneDate NOT IN (?, ?, ?)
             """,
             (two_days_ago_str, yesterday_str, today_str)
         )

@@ -66,18 +66,18 @@ class MessageScheduler:
         # Reminder Messages - Every day at 5 PM UTC+5
         self.scheduler.add_job(
             self.scheduled_reminder_messages,
-            trigger=CronTrigger(hour=1, minute=26, timezone=timezone.utc)
+            trigger=CronTrigger(hour=1, minute=30, timezone=timezone.utc)
         )
 
         # Broken Streak Messages - Every day at 5 AM UTC+5 (i.e. 00:00 UTC)
         self.scheduler.add_job(
             self.scheduled_broken_streak_messages,
-            trigger=CronTrigger(hour=1, minute=25, timezone=timezone.utc)
+            trigger=CronTrigger(hour=1, minute=31, timezone=timezone.utc)
         )
 
         self.scheduler.add_job(
             self.scheduled_update_streaks,
-            trigger=CronTrigger(hour=1, minute=24, timezone=timezone.utc)
+            trigger=CronTrigger(hour=1, minute=29, timezone=timezone.utc)
         )
 
         # Reflection Messages - Every day at 9 PM UTC+5 (i.e. 16:00 UTC)
