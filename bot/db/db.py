@@ -303,7 +303,7 @@ class Database:
         for user in users:
             telegram = user["Telegram"]
             last_done_date_str = user["lastDoneDate"]
-            
+            new_streak = None
             if last_done_date_str:
                 try:
                     last_done_date = datetime.strptime(last_done_date_str, "%Y-%m-%d").date()
@@ -313,7 +313,7 @@ class Database:
                 else:
                     if last_done_date == yesterday:
                         # Increment streak if yesterday's challenge was completed.
-                        pass
+                        continue
                     else:
                         new_streak = user["Streak"] + "0"
             else:
