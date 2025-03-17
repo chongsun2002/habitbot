@@ -350,7 +350,7 @@ class Database:
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR lastDoneDate NOT IN (?, ?)
+            WHERE lastDoneDate IS NULL OR date(TRIM(lastDoneDate)) NOT IN (?, ?)
             """,
             (today_str, yesterday_str)
         )
@@ -363,23 +363,24 @@ class Database:
         Retrieves a list of Telegram IDs for users whose last done date is more than 2 days ago.
         
         Users are included if:
-        - They have no recorded last done date (NULL).
-        - Their last done date is **before** (today - 2 days) in UTC+5.
-
+        - They have no recorded last done date (NULL), or
+        - Their last done date (as a date) is before (today - 2 days) in UTC+5.
+        
         Returns:
             A list of Telegram IDs (strings) whose streaks are broken.
         """
-        current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)  # Convert to UTC+5
-        today_str = current_datetime.date().isoformat()         # "YYYY-MM-DD"
-        two_days_ago_str = (current_datetime - timedelta(days=2)).date().isoformat()  # Format: "YYYY-MM-DD"
-        yesterday_str = (current_datetime - timedelta(days=1)).date().isoformat()  # "YYYY-MM-DD"
-        # Use the date() function to force proper date comparisons.
+        # Adjust current time to UTC+5
+        current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)
+        # Calculate the cutoff date (today - 2 days)
+        cutoff_date = (current_datetime - timedelta(days=2)).date().isoformat()  # e.g., "2025-03-15"
+        
+        # Use TRIM and date() to ensure proper date conversion and remove any stray spaces.
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR lastDoneDate NOT IN (?, ?, ?)
+            WHERE lastDoneDate IS NULL OR date(TRIM(lastDoneDate)) < date(?)
             """,
-            (two_days_ago_str, yesterday_str, today_str)
+            (cutoff_date,)
         )
         
         return [row["Telegram"] for row in self.cursor.fetchall()]
