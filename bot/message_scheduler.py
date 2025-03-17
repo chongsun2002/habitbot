@@ -40,7 +40,7 @@ class MessageScheduler:
         )
         bot = await TelegramBot.get_instance()
         users_with_broken_streaks = Database.get_instance().get_users_streaks_broken()
-        logging.info(users_with_broken_streaks)
+        logging.info(f"{users_with_broken_streaks} users")
         await bot.broadcast_message(broken_streak_message, Database.get_instance().get_users_streaks_broken())
 
     async def scheduled_reflection_sending(self):
@@ -68,13 +68,13 @@ class MessageScheduler:
         # Reminder Messages - Every day at 5 PM UTC+5
         self.scheduler.add_job(
             self.scheduled_reminder_messages,
-            trigger=CronTrigger(hour=1, minute=46, timezone=timezone.utc)
+            trigger=CronTrigger(hour=1, minute=59, timezone=timezone.utc)
         )
 
         # Broken Streak Messages - Every day at 5 AM UTC+5 (i.e. 00:00 UTC)
         self.scheduler.add_job(
             self.scheduled_broken_streak_messages,
-            trigger=CronTrigger(hour=1, minute=46, timezone=timezone.utc)
+            trigger=CronTrigger(hour=1, minute=59, timezone=timezone.utc)
         )
 
         self.scheduler.add_job(
