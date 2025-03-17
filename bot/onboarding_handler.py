@@ -55,6 +55,7 @@ async def onboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["telegram"] = user
     if Database.get_instance().is_user_registered(user.id):
         await update.message.reply_text(OnboardingStates.already_onboarded_message)
+        return ConversationHandler.END
     next_state = OnboardingStates.WHAT
     await update.message.reply_text(OnboardingStates.pre_state_messages[next_state])
     return next_state

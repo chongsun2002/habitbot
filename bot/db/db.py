@@ -343,19 +343,20 @@ class Database:
             A list of Telegram IDs (strings) to remind for challenge completion.
         """
         current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)
-        today_str = current_datetime.date().isoformat()  # Format: "YYYY-MM-DD"
-        yesterday_str = (current_datetime - timedelta(days=1)).date().isoformat()  # Format: "YYYY-MM-DD"
+        today_str = current_datetime.date().isoformat()         # "YYYY-MM-DD"
+        yesterday_str = (current_datetime - timedelta(days=1)).date().isoformat()  # "YYYY-MM-DD"
 
-        # Retrieve users whose last done date is neither today nor yesterday.
+        # Use SQLite's date() function for proper date comparisons.
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR (lastDoneDate != ? AND lastDoneDate != ?)
+            WHERE lastDoneDate IS NULL OR date(lastDoneDate) NOT IN (?, ?)
             """,
             (today_str, yesterday_str)
         )
 
         return [row["Telegram"] for row in self.cursor.fetchall()]
+
     
     def get_users_streaks_broken(self):
         """
@@ -368,18 +369,18 @@ class Database:
         Returns:
             A list of Telegram IDs (strings) whose streaks are broken.
         """
-        current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)  # ✅ Convert to UTC+5
+        current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)  # Convert to UTC+5
         two_days_ago_str = (current_datetime - timedelta(days=2)).date().isoformat()  # Format: "YYYY-MM-DD"
 
-        # Select users whose last done date is older than two days ago OR is NULL
+        # Use the date() function to force proper date comparisons.
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR lastDoneDate < ?
+            WHERE lastDoneDate IS NULL OR date(lastDoneDate) < date(?)
             """,
             (two_days_ago_str,)
         )
-
+        
         return [row["Telegram"] for row in self.cursor.fetchall()]
 
     def close(self):
