@@ -350,7 +350,7 @@ class Database:
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR date(lastDoneDate) NOT IN (?, ?)
+            WHERE lastDoneDate IS NULL OR lastDoneDate NOT IN (?, ?)
             """,
             (today_str, yesterday_str)
         )
@@ -370,15 +370,16 @@ class Database:
             A list of Telegram IDs (strings) whose streaks are broken.
         """
         current_datetime = datetime.now(timezone.utc) + timedelta(hours=5)  # Convert to UTC+5
+        today_str = current_datetime.date().isoformat()         # "YYYY-MM-DD"
         two_days_ago_str = (current_datetime - timedelta(days=2)).date().isoformat()  # Format: "YYYY-MM-DD"
-
+        yesterday_str = (current_datetime - timedelta(days=1)).date().isoformat()  # "YYYY-MM-DD"
         # Use the date() function to force proper date comparisons.
         self.cursor.execute(
             """
             SELECT Telegram FROM Users
-            WHERE lastDoneDate IS NULL OR date(lastDoneDate) < date(?)
+            WHERE lastDoneDate IS NULL OR lastDoneDate < NOT IN(?, ?, ?)
             """,
-            (two_days_ago_str,)
+            (two_days_ago_str, yesterday_str, today_str)
         )
         
         return [row["Telegram"] for row in self.cursor.fetchall()]
