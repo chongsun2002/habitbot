@@ -184,7 +184,6 @@ class Database:
         user_data = self.cursor.fetchone()
 
         if user_data:
-            logging.info(f"📋 Retrieved User Data: {dict(user_data)}")
             return user_data["Streak"] if user_data["Streak"] else "0"
         
         logging.warning(f"⚠️ No user found for Telegram ID: {telegram}")
